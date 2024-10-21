@@ -7,7 +7,7 @@ The Programming Tutorial Agent is an interactive learning tool designed to help 
 
 ## Features
 
-- **Multi Language Support**: Option to choose various tutorials.
+- **Multi Programming Language Support**: Option to choose various tutorials.
 - **Interactive Chat Interface**: Engage in a conversation-like learning experience with the tutorial agent.
 - **Topic Navigation**: Explore different programming concepts organized by topics and subtopics.
 - **Quiz Mode**: Test your knowledge with built-in quizzes for each topic.
