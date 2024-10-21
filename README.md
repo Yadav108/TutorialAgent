@@ -3,7 +3,7 @@
 
 ## Overview
 
-The Programming Tutorial Agent is an interactive learning tool designed to help users learn Python and C# programming languages. This application provides a user-friendly graphical interface where learners can engage with a virtual tutor, ask questions, and progress through various programming topics at their own pace.
+The Programming Tutorial Agent is an interactive learning tool designed to help users learn programming languages. This application provides a user-friendly graphical interface where learners can engage with a virtual tutor, ask questions, and progress through various programming topics at their own pace.
 
 ## Features
 
