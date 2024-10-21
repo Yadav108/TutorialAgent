@@ -1,7 +1,3 @@
-import tkinter as tk
-from tkinter import ttk, scrolledtext, messagebox
-import json
-
 import nltk
 from nltk import WordNetLemmatizer, word_tokenize
 from nltk.corpus import stopwords
@@ -13,7 +9,7 @@ nltk.download('stopwords', quiet=True)
 nltk.download('wordnet', quiet=True)
 
 
-class TutorialAgent:
+class CsharpTutorialAgent:
     def __init__(self):
         self.topics = {
             "basics": ["variables", "data types", "operators", "control structures", "input and output"],
@@ -378,7 +374,7 @@ class TutorialAgent:
         return subtopics[most_similar_index]
 
     def greet(self):
-        return "Hello! I'm your Python Tutorial Agent. How can I help you today? You can ask me about specific topics or type 'topics' to see what I can teach you."
+        return "Hello! I'm your C# Tutorial Agent. How can I help you today? You can ask me about specific topics or type 'topics' to see what I can teach you."
 
     def list_topics(self):
         return "I can teach you about: " + ", ".join(self.topics.keys()) + ". Which topic would you like to explore?"
@@ -483,8 +479,6 @@ class TutorialAgent:
         else:
             return "Please choose a topic first. " + self.list_topics()
 
-    def list_topics(self):
-        return "I can teach you about: " + ", ".join(self.topics.keys()) + ". Which topic would you like to explore?"
 
     def show_progress(self):
         progress_report = "Here's your learning progress:\n"
@@ -501,201 +495,7 @@ class TutorialAgent:
         else:
             return []
 
-    def show_progress(self):
-        progress_report = "Here's your learning progress:\n"
-        for topic, subtopics in self.progress.items():
-            completed = sum(subtopics.values())
-            total = len(subtopics)
-            percentage = (completed / total) * 100
-            progress_report += f"{topic.capitalize()}: {completed}/{total} subtopics completed ({percentage:.0f}%)\n"
-        return progress_report
 
-
-class TutorialGUI:
-    def __init__(self, master):
-        self.master = master
-        self.master.title("Python Tutorial Agent")
-        self.master.geometry("700x500")
-        self.agent = TutorialAgent()
-        self.quiz_in_progress = False
-        self.current_question = 0
-        self.quiz_questions = []
-
-        self.dark_mode = self.load_dark_mode_setting()
-        self.create_widgets()
-        self.apply_theme()
-
-    def create_widgets(self):
-        self.style = ttk.Style()
-
-        # Main frame
-        self.main_frame = ttk.Frame(self.master, padding="10")
-        self.main_frame.pack(fill=tk.BOTH, expand=True)
-
-        # Chat display
-        self.chat_display = scrolledtext.ScrolledText(self.main_frame, wrap=tk.WORD, width=80, height=20)
-        self.chat_display.grid(row=0, column=0, columnspan=6, padx=10, pady=10, sticky="nsew")
-        self.chat_display.config(state=tk.DISABLED)
-
-        # User input
-        self.user_input = ttk.Entry(self.main_frame, width=70)
-        self.user_input.grid(row=1, column=0, columnspan=5, padx=10, pady=10, sticky="ew")
-        self.user_input.bind("<Return>", self.send_message)
-
-        # Send button
-        self.send_button = ttk.Button(self.main_frame, text="Send", command=self.send_message)
-        self.send_button.grid(row=1, column=5, padx=5, pady=10)
-
-        # Action buttons
-        actions = ["Help", "Topics", "Next", "Quiz", "Progress"]
-        for i, action in enumerate(actions):
-            button = ttk.Button(self.main_frame, text=action, command=lambda a=action: self.perform_action(a))
-            button.grid(row=2, column=i, padx=2, pady=10)
-
-        # Dark mode toggle
-        self.dark_mode_var = tk.BooleanVar(value=self.dark_mode)
-        self.dark_mode_check = ttk.Checkbutton(self.main_frame, text="Dark Mode",
-                                               command=self.toggle_dark_mode,
-                                               variable=self.dark_mode_var)
-        self.dark_mode_check.grid(row=2, column=5, padx=2, pady=10)
-
-        # Menu
-        self.menu_bar = tk.Menu(self.master)
-        self.master.config(menu=self.menu_bar)
-
-        self.file_menu = tk.Menu(self.menu_bar, tearoff=0)
-        self.menu_bar.add_cascade(label="File", menu=self.file_menu)
-        self.file_menu.add_command(label="Save Chat", command=self.save_chat)
-        self.file_menu.add_separator()
-        self.file_menu.add_command(label="Exit", command=self.master.quit)
-
-        self.help_menu = tk.Menu(self.menu_bar, tearoff=0)
-        self.menu_bar.add_cascade(label="Help", menu=self.help_menu)
-        self.help_menu.add_command(label="About", command=self.show_about)
-
-        # Configure grid
-        self.main_frame.columnconfigure(0, weight=1)
-        self.main_frame.rowconfigure(0, weight=1)
-
-        self.display_message("Agent: " + self.agent.greet())
-
-    def send_message(self, event=None):
-        user_message = self.user_input.get()
-        self.display_message("You: " + user_message)
-        self.user_input.delete(0, tk.END)
-
-        response = self.agent.handle_input(user_message)
-        self.display_message("Agent: " + response)
-
-        if self.agent.is_exit_command(user_message):
-            self.master.after(1000, self.master.quit)
-
-    def display_message(self, message):
-        self.chat_display.config(state=tk.NORMAL)
-        self.chat_display.insert(tk.END, message + "\n\n")
-        self.chat_display.see(tk.END)
-        self.chat_display.config(state=tk.DISABLED)
-
-    def perform_action(self, action):
-        if action == "Help":
-            self.display_message(
-                "Agent: You can ask me about Python topics, or use the buttons to navigate. Type 'topics' to see available topics, 'next' to move to the next subtopic, or 'quiz' to start a quiz on the current topic.")
-        elif action == "Topics":
-            self.display_message("Agent: " + self.agent.list_topics())
-        elif action == "Next":
-            response = self.agent.next_subtopic()
-            self.display_message("Agent: " + response)
-        elif action == "Quiz":
-            response = self.agent.next_subtopic()
-            self.display_message("Agent: " + response)
-        elif action == "Progress":
-            progress_report = self.agent.show_progress()
-            self.display_message("Agent: " + progress_report)
-
-    def start_quiz(self):
-        self.quiz_questions = self.agent.get_quiz_questions()
-        if not self.quiz_questions:
-            self.display_message("Agent: Sorry, there are no quiz questions available for this topic.")
-            return
-        self.quiz_in_progress = True
-        self.current_question = 0
-        self.display_message("Agent: Starting the quiz. Type 'stop' or 'exit' at any time to end the quiz.")
-        self.display_next_question()
-
-    def display_next_question(self):
-        if self.current_question < len(self.quiz_questions):
-            question, _ = self.quiz_questions[self.current_question]
-            self.display_message(f"Agent: Quiz Question {self.current_question + 1}: {question}")
-        else:
-            self.display_message("Agent: Quiz completed! Well done!")
-            self.quiz_in_progress = False
-
-    def handle_quiz_answer(self, user_answer):
-        _, correct_answer = self.quiz_questions[self.current_question]
-        if user_answer.lower() == correct_answer.lower():
-            self.display_message("Agent: Correct!")
-        else:
-            self.display_message(f"Agent: Sorry, the correct answer is: {correct_answer}")
-
-        self.current_question += 1
-        self.display_next_question()
-
-    def toggle_dark_mode(self):
-        self.dark_mode = self.dark_mode_var.get()
-        self.apply_theme()
-        self.save_dark_mode_setting()
-
-    def apply_theme(self):
-        if self.dark_mode:
-            self.style.theme_use('clam')
-            self.style.configure(".", background="#2b2b2b", foreground="white")
-            self.style.configure("TButton", background="#4a4a4a", foreground="white")
-            self.style.map("TButton", background=[('active', '#666666')])
-            self.style.configure("TCheckbutton", background="#2b2b2b", foreground="white")
-            self.chat_display.config(bg="#2b2b2b", fg="white")
-            self.user_input.config(style="Dark.TEntry")
-            self.style.configure("Dark.TEntry", fieldbackground="#4a4a4a", foreground="white")
-        else:
-            self.style.theme_use('clam')
-            self.style.configure(".", background="white", foreground="black")
-            self.style.configure("TButton", background="#e1e1e1", foreground="black")
-            self.style.map("TButton", background=[('active', '#d1d1d1')])
-            self.style.configure("TCheckbutton", background="white", foreground="black")
-            self.chat_display.config(bg="white", fg="black")
-            self.user_input.config(style="TEntry")
-            self.style.configure("TEntry", fieldbackground="white", foreground="black")
-
-    def load_dark_mode_setting(self):
-        try:
-            with open("settings.json", "r") as f:
-                settings = json.load(f)
-                return settings.get("dark_mode", False)
-        except (FileNotFoundError, json.JSONDecodeError):
-            return False
-
-    def save_dark_mode_setting(self):
-        settings = {"dark_mode": self.dark_mode}
-        with open("settings.json", "w") as f:
-            json.dump(settings, f)
-
-    def save_chat(self):
-        chat_content = self.chat_display.get("1.0", tk.END)
-        try:
-            with open("chat_log.txt", "w", encoding="utf-8") as f:
-                f.write(chat_content)
-            messagebox.showinfo("Save Chat", "Chat log has been saved to chat_log.txt")
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to save chat log: {str(e)}")
-
-    def show_about(self):
-        about_text = "Python Tutorial Agent\nVersion 2.0\nCreated with ❤️ for learning Python\nAryan Yadav"
-        messagebox.showinfo("About", about_text)
-
-def main():
-                root = tk.Tk()
-                gui = TutorialGUI(root)
-                root.protocol("WM_DELETE_WINDOW", root.quit)  # Ensure clean exit
-                root.mainloop()
-
-if __name__ == "__main__":
-                main()
+    def start_tutorial(self):
+        print("Welcome to the C# Tutorial!")
+        return self.greet()
