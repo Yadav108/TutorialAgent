@@ -16,7 +16,7 @@ nltk.download('wordnet', quiet=True)
 class TutorialAgent:
     def __init__(self):
         self.topics = {
-            "python basics": ["variables", "data types", "operators", "control structures", "type casting",
+            "Basics": ["variables", "data types", "operators", "control structures", "type casting",
                               "input and output"],
             "data structures": ["lists", "tuples", "dictionaries", "sets", "list comprehensions",
                                 "dictionary comprehensions"],
@@ -40,7 +40,7 @@ class TutorialAgent:
                                          "efficient loops", "NumPy and vectorization", "compiling with Cython",
                                          "using concurrent.futures", "database indexing"]
         }
-        print("TutorialAgent initialized")
+
         self.exit_commands = ["exit", "quit", "stop", "bye", "goodbye"]
         self.knowledge_base = self.init_knowledge_base()
         self.current_topic = None
@@ -55,7 +55,7 @@ class TutorialAgent:
 
     def init_knowledge_base(self):
         knowledge_base = {
-            "python basics": [
+            "Basics": [
                 {
                     "variables": "Variables are containers for storing data values. Python uses dynamic typing, so you don't need to declare a variable's type explicitly."
                 },
@@ -321,9 +321,9 @@ class TutorialAgent:
         return knowledge_base
         pass
     def init_quiz_questions(self):
-        # Quiz questions content (same as before)
+
         return {
-    "python basics": [
+    "Basics": [
         ("What keyword is used to define a function in Python?", "def"),
         ("Which of these is not a valid variable name: my_var, 2nd_var, _private, camelCase?", "2nd_var"),
         ("What is the result of 3 * 'abc'?", "abcabcabc"),
@@ -444,7 +444,7 @@ class TutorialAgent:
         user_input = user_input.lower().strip()
 
         if self.is_exit_command(user_input):
-            return "Thank you for using the Python Tutorial Agent. Goodbye!"
+            return "Thank you for using the C# Tutorial Agent. Goodbye!"
 
         if user_input == "3" or "progress" in user_input:
             return self.show_progress()
@@ -452,8 +452,11 @@ class TutorialAgent:
         if "topic" in user_input:
             return self.list_topics()
 
+        if self.mode == "quiz":
+            return self.handle_quiz_answer(user_input)
+
         # Check for partial matches in topics
-        matching_topics = [topic for topic in self.topics if topic in user_input]
+        matching_topics = [topic for topic in self.topics if topic.lower() in user_input]
         if matching_topics:
             self.current_topic = matching_topics[0]
             self.current_subtopic = None
@@ -463,8 +466,7 @@ class TutorialAgent:
             if user_input == "start" or "next" in user_input:
                 return self.next_subtopic()
             elif user_input in ["1", "quiz"]:
-                self.mode = "quiz"
-                return "Great! Let's start a quiz. Type 'stop' or 'exit' at any time to end the quiz."
+                return self.start_quiz()
             elif user_input in ["2", "new topic"]:
                 self.current_topic = None
                 self.current_subtopic = None
@@ -474,6 +476,34 @@ class TutorialAgent:
         most_similar_subtopic = self.get_most_similar_subtopic(user_input)
         subtopic_info = self.get_subtopic_info(most_similar_subtopic)
         return f"Based on your question, I think you might be interested in {most_similar_subtopic}. Here's what I know:\n\n{subtopic_info}\n\nDo you want to know more about this, or shall we move to the next topic? Type 'next' to continue or ask me anything else."
+
+    def start_quiz(self):
+        self.mode = "quiz"
+        self.current_question = 0
+        self.quiz_questions = self.get_quiz_questions()
+        if not self.quiz_questions:
+            self.mode = "tutorial"
+            return "Sorry, there are no quiz questions available for this topic."
+        return self.get_next_question()
+
+    def get_next_question(self):
+        if self.current_question < len(self.quiz_questions):
+            question, _ = self.quiz_questions[self.current_question]
+            return f"Quiz Question {self.current_question + 1}: {question}"
+        else:
+            self.mode = "tutorial"
+            return "Quiz completed! Well done! Type 'next' to continue with the tutorial or choose a new topic."
+
+    def handle_quiz_answer(self, user_answer):
+        _, correct_answer = self.quiz_questions[self.current_question]
+        if user_answer.lower() == correct_answer.lower():
+            response = "Correct!"
+        else:
+            response = f"Sorry, the correct answer is: {correct_answer}"
+
+        self.current_question += 1
+        next_question = self.get_next_question()
+        return f"{response}\n\n{next_question}"
 
     def get_subtopic_info(self, subtopic):
         print(f"Getting info for subtopic: {subtopic}")
@@ -632,7 +662,8 @@ class TutorialGUI:
             response = self.agent.next_subtopic()
             self.display_message("Agent: " + response)
         elif action == "Quiz":
-            self.start_quiz()
+            response = self.agent.next_subtopic()
+            self.display_message("Agent: " + response)
         elif action == "Progress":
             progress_report = self.agent.show_progress()
             self.display_message("Agent: " + progress_report)
