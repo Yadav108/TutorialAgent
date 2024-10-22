@@ -43,7 +43,7 @@ class TutorialGUI:
 
         # Start button
         self.start_button = ttk.Button(self.main_frame, text="Start Tutorial", command=self.start_tutorial)
-        self.start_button.grid(row=3, column=0, columnspan=6, pady=20)
+        self.start_button.grid(row=3, column=0, columnspan=6, pady=50)
 
         # Chat display (hidden initially)
         self.chat_display = scrolledtext.ScrolledText(self.main_frame, wrap=tk.WORD, width=80, height=20)
@@ -137,6 +137,7 @@ class TutorialGUI:
         elif action == "Progress":
             progress_report = self.current_agent.show_progress()
             self.display_message("Agent: " + progress_report)
+
 
     def toggle_dark_mode(self):
         self.dark_mode = self.dark_mode_var.get()
