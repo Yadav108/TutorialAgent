@@ -377,30 +377,41 @@ class CsharpTutorialAgent:
         return "Hello! I'm your C# Tutorial Agent. How can I help you today? You can ask me about specific topics or type 'topics' to see what I can teach you."
 
     def list_topics(self):
-        return "I can teach you about: " + ", ".join(self.topics.keys()) + ". Which topic would you like to explore?"
+        topics_list = "\nAvailable C# Topics:\n"
+        for i, topic in enumerate(self.topics.keys(), 1):
+            topics_list += f"{i}. {topic.capitalize()}\n"
+        topics_list += "\nWhich topic would you like to explore? (Type the topic name or number)"
+        return topics_list
 
     def handle_input(self, user_input):
-        print(f"Handling input: {user_input}")
         user_input = user_input.lower().strip()
 
         if self.is_exit_command(user_input):
             return "Thank you for using the C# Tutorial Agent. Goodbye!"
 
-        if user_input == "3" or "progress" in user_input:
+        if user_input == "progress":
             return self.show_progress()
 
         if "topic" in user_input:
             return self.list_topics()
 
-        if self.mode == "quiz":
-            return self.handle_quiz_answer(user_input)
+        # Handle topic selection by number
+        if user_input.isdigit():
+            topic_number = int(user_input)
+            topic_list = list(self.topics.keys())
+
+            if 1 <= topic_number <= len(topic_list):
+                selected_topic = topic_list[topic_number - 1]
+                self.current_topic = selected_topic
+                return f"Great! Let's learn about {selected_topic}. We'll cover: {', '.join(self.topics[selected_topic])}.\nType 'start' when you're ready to begin, or ask me anything about {selected_topic}."
+            else:
+                return f"Please enter a number between 1 and {len(topic_list)}."
 
         # Check for partial matches in topics
         matching_topics = [topic for topic in self.topics if topic.lower() in user_input]
         if matching_topics:
             self.current_topic = matching_topics[0]
-            self.current_subtopic = None
-            return f"Great! Let's learn about {self.current_topic}. We'll cover: {', '.join(self.topics[self.current_topic])}. Type 'start' when you're ready to begin, or ask me anything about {self.current_topic}."
+            return f"Great! Let's learn about {self.current_topic}. We'll cover: {', '.join(self.topics[self.current_topic])}.\nType 'start' when you're ready to begin, or ask me anything about {self.current_topic}."
 
         if self.current_topic:
             if user_input == "start" or "next" in user_input:
@@ -416,7 +427,6 @@ class CsharpTutorialAgent:
         most_similar_subtopic = self.get_most_similar_subtopic(user_input)
         subtopic_info = self.get_subtopic_info(most_similar_subtopic)
         return f"Based on your question, I think you might be interested in {most_similar_subtopic}. Here's what I know:\n\n{subtopic_info}\n\nDo you want to know more about this, or shall we move to the next topic? Type 'next' to continue or ask me anything else."
-
     def start_quiz(self):
         self.mode = "quiz"
         self.current_question = 0
