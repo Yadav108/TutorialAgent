@@ -63,6 +63,7 @@ The Programming Tutorial Agent is an interactive learning tool designed to help 
 - `main.py`: The main script that runs the GUI and manages the tutorial agents.
 - `python_tutorial.py`: Contains the Python tutorial agent logic and content.
 - `csharp_tutorial.py`: Contains the C# tutorial agent logic and content.
+- ˋcpp_tutorial.py´:Contains he c++ tutorial agnt logic and content.
 - `settings.json`: Stores user preferences (e.g., dark mode setting).
 
 ## Customization
